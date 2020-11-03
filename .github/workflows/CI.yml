@@ -6,9 +6,9 @@ name: CI
 # events but only for the main branch
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,20 +25,23 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - uses: Gr1N/setup-poetry@v4
+      - uses: abatilo/actions-poetry@v2.0.0
       # Setup potery virtualenvs caching to prevent full installation on each run
       - uses: actions/cache@v1
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            ${{ runner.os }}-poetry-
+            ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+      - name: Display poetry version
+        run: |
+          poetry --version
       - name: Install dependencies
         run: |
-          potery install
+          poetry install
       - name: Black linting
         run: |
-          poetry run black .
+          poetry run black --check .
       - name: Test with pytest
         run: |
           poetry run pytest .
@@ -48,9 +51,9 @@ jobs:
           wheel_filename=$(poetry build -f wheel | grep -P -o 'codstatstracker[-\d\w.]+') |
           wheel_file=($pwd)/dist/$wheel_filename |
           # Setup wheel name as global env variable to use it for artifact uploading
-          echo "::set-env name=WHEEL_FILE::$wheel_file"
+          echo "wheel_file=$wheel_file" >> $GITHUB_ENV
       - name: Archive wheel as artifact
         uses: actions/upload-artifact@v2
         with:
           name: codstatstracker-wheel
-          path: ${{ env.WHEEL_FILE }}
+          path: ${{ env.wheel_file }}
