@@ -16,14 +16,31 @@ class PlayerMatchStats(Protocol):
     kills: int
     assists: int
     death: int
+    kd_ration: float
+    killstreaks_used: Sequence[str]
     longest_streak: int
     suicides: int
     executions: int
     damage_dealt: int
     damage_received: int
-    distance_traveled: int
-
+    percent_time_moved: float
+    shots_fired: int
+    shots_missed: int
+    headshots: int
+    wall_bangs: int
     time_played: timedelta
+    distance_traveled: float
+    average_speed: float
+
+
+class PlayerWeaponMatchStats(Protocol):
+    name: str
+    hits: int
+    kills: int
+    death: int
+    shots: int
+    hits: int
+    headshots: int
 
 
 class PlayerGameMatch(Protocol):
@@ -33,6 +50,8 @@ class PlayerGameMatch(Protocol):
     map: str
     mode: str
     is_win: bool
+    general_stats: PlayerMatchStats
+    weapon_stats: PlayerWeaponMatchStats
 
 
 class PlayerAPI:

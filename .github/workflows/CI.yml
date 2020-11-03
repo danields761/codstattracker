@@ -16,6 +16,8 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -24,15 +26,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-      - uses: abatilo/actions-poetry@v2.0.0
-      # Setup poetry virtualenvs caching to prevent full installation on each run
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          python-version: '3.9.0'
+      - name: Installing poetry
+        run: |
+          pip install poetry wheel
       - name: Display poetry version
         run: |
           poetry --version
@@ -47,10 +44,10 @@ jobs:
           poetry run pytest .
       - name: Build wheel
         run: |
-          wheel_filename=$(poetry build -f wheel | grep -P -o 'codstatstracker[-\d\w.]+') |
-          wheel_file=($pwd)/dist/$wheel_filename |
-          print "$wheel_filename" |
-          echo "wheel_file=$wheel_file" |
+          wheel_filename=$(poetry build -f wheel | grep -P -o 'codstatstracker[-\d\w.]+')
+          wheel_file=($pwd)/dist/$wheel_filename
+          print "$wheel_filename"
+          echo "wheel_file=$wheel_file"
           echo "wheel_file=$wheel_file" >> $GITHUB_ENV
       - name: Archive wheel as artifact
         uses: actions/upload-artifact@v2
