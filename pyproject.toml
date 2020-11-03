@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "codstatstracker"
+name = "codstattracker"
 version = "0.1.0"
 description = "App to poll and collect your COD stats"
 authors = ["Daniel Daniels <danields761@gmail.com>"]
