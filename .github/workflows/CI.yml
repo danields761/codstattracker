@@ -26,7 +26,7 @@ jobs:
         with:
           python-version: '3.9'
       - uses: abatilo/actions-poetry@v2.0.0
-      # Setup potery virtualenvs caching to prevent full installation on each run
+      # Setup poetry virtualenvs caching to prevent full installation on each run
       - uses: actions/cache@v1
         with:
           path: ~/.cache/pypoetry/virtualenvs
@@ -47,11 +47,11 @@ jobs:
           poetry run pytest .
       - name: Build wheel
         run: |
-          # Fetching wheel filename from command output is bit tricky
           wheel_filename=$(poetry build -f wheel | grep -P -o 'codstatstracker[-\d\w.]+') |
           wheel_file=($pwd)/dist/$wheel_filename |
-          # Setup wheel name as global env variable to use it for artifact uploading
-          echo "WHEEL_FILE=$wheel_file" >> $GITHUB_ENV
+          print "$wheel_filename" |
+          echo "wheel_file=$wheel_file" |
+          echo "wheel_file=$wheel_file" >> $GITHUB_ENV
       - name: Archive wheel as artifact
         uses: actions/upload-artifact@v2
         with:
