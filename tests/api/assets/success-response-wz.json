@@ -1,0 +1,227 @@
+{
+    "status": "success",
+    "data": {
+        "matches": [
+            {
+                "utcStartSeconds": 1605354410,
+                "utcEndSeconds": 1605356002,
+                "map": "mp_don3",
+                "mode": "br_brduos",
+                "matchID": "13733821167676440496",
+                "duration": 1592000,
+                "playlistName": null,
+                "version": 1,
+                "gameType": "wz",
+                "playerCount": 150,
+                "playerStats": {
+                    "kills": 12.0,
+                    "medalXp": 335.0,
+                    "objectiveTeamWiped": 7.0,
+                    "objectiveLastStandKill": 4.0,
+                    "matchXp": 9780.0,
+                    "scoreXp": 12770.0,
+                    "wallBangs": 0.0,
+                    "score": 11250.0,
+                    "totalXp": 23427.0,
+                    "headshots": 1.0,
+                    "assists": 0.0,
+                    "challengeXp": 0.0,
+                    "rank": 54.0,
+                    "scorePerMinute": 611.9673617407071,
+                    "distanceTraveled": 597077.3,
+                    "teamSurvivalTime": 1031952.0,
+                    "deaths": 2.0,
+                    "kdRatio": 6.0,
+                    "objectiveBrDownEnemyCircle2": 3.0,
+                    "objectiveBrDownEnemyCircle1": 10.0,
+                    "objectiveBrMissionPickupTablet": 3.0,
+                    "bonusXp": 0.0,
+                    "objectiveBrKioskBuy": 4.0,
+                    "gulagDeaths": 0.0,
+                    "timePlayed": 1103.0,
+                    "executions": 0.0,
+                    "gulagKills": 1.0,
+                    "nearmisses": 0.0,
+                    "objectiveBrCacheOpen": 8.0,
+                    "percentTimeMoving": 97.75171,
+                    "miscXp": 0.0,
+                    "objectiveTrophyDefense": 2.0,
+                    "longestStreak": 8.0,
+                    "teamPlacement": 16.0,
+                    "damageDone": 3920.0,
+                    "damageTaken": 534.0
+                },
+                "player": {
+                    "team": "team_seventy",
+                    "rank": 54.0,
+                    "awards": {},
+                    "username": "Recrent",
+                    "uno": "6798844756853812424",
+                    "brMissionStats": {
+                        "missionsComplete": 2,
+                        "totalMissionXpEarned": 1420.0,
+                        "totalMissionWeaponXpEarned": 280.0,
+                        "missionStatsByType": {
+                            "assassination": {
+                                "weaponXp": 280.0,
+                                "xp": 1420.0,
+                                "count": 2.0
+                            }
+                        }
+                    },
+                    "loadout": [
+                        {
+                            "primaryWeapon": {
+                                "name": "iw8_sn_crossbow",
+                                "label": null,
+                                "imageLoot": null,
+                                "imageIcon": null,
+                                "variant": "-1",
+                                "attachments": [
+                                    {
+                                        "name": "reflex",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    }
+                                ]
+                            },
+                            "secondaryWeapon": {
+                                "name": "iw8_pi_decho",
+                                "label": null,
+                                "imageLoot": null,
+                                "imageIcon": null,
+                                "variant": "-1",
+                                "attachments": [
+                                    {
+                                        "name": "reflexmini",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    },
+                                    {
+                                        "name": "none",
+                                        "label": null,
+                                        "image": null,
+                                        "category": null
+                                    }
+                                ]
+                            },
+                            "perks": [
+                                {
+                                    "name": "specialty_null",
+                                    "label": null,
+                                    "image": null,
+                                    "imageMainUi": null,
+                                    "imageProgression": null
+                                },
+                                {
+                                    "name": "specialty_null",
+                                    "label": null,
+                                    "image": null,
+                                    "imageMainUi": null,
+                                    "imageProgression": null
+                                },
+                                {
+                                    "name": "specialty_null",
+                                    "label": null,
+                                    "image": null,
+                                    "imageMainUi": null,
+                                    "imageProgression": null
+                                }
+                            ],
+                            "extraPerks": [
+                                {
+                                    "name": "null",
+                                    "label": null,
+                                    "image": null,
+                                    "imageMainUi": null,
+                                    "imageProgression": null
+                                },
+                                {
+                                    "name": "null",
+                                    "label": null,
+                                    "image": null,
+                                    "imageMainUi": null,
+                                    "imageProgression": null
+                                },
+                                {
+                                    "name": "null",
+                                    "label": null,
+                                    "image": null,
+                                    "imageMainUi": null,
+                                    "imageProgression": null
+                                }
+                            ],
+                            "killstreaks": [
+                                {"name": "none", "label": null},
+                                {"name": "none", "label": null},
+                                {"name": "none", "label": null}
+                            ],
+                            "tactical": {
+                                "name": "equip_flash",
+                                "label": null,
+                                "image": null,
+                                "imageLarge": null,
+                                "progressionImage": null
+                            },
+                            "lethal": {
+                                "name": "equip_molotov",
+                                "label": null,
+                                "image": null,
+                                "imageLarge": null,
+                                "progressionImage": null
+                            }
+                        }
+                    ]
+                },
+                "teamCount": 77,
+                "rankedTeams": null,
+                "draw": false,
+                "privateMatch": false
+            }
+        ]
+    }
+}
