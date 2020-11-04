@@ -1,22 +1,24 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Sequence, Protocol, Optional
+from typing import Optional, Sequence
 
 
-class PlayerID(Protocol):
+@dataclass
+class PlayerID:
+    nickname: str
     id: str
     platform: str
 
-
-class Player(Protocol):
-    id: PlayerID
-    nickname: str
+    def __repr__(self) -> str:
+        return f'{self.platform}:{self.nickname}#{self.id}'
 
 
-class PlayerMatchStats(Protocol):
+@dataclass
+class PlayerMatchStats:
     kills: int
     assists: int
-    death: int
-    kd_ration: float
+    deaths: int
+    kd_ratio: float
     killstreaks_used: Sequence[str]
     longest_streak: int
     suicides: int
@@ -33,35 +35,42 @@ class PlayerMatchStats(Protocol):
     average_speed: float
 
 
-class PlayerWeaponMatchStats(Protocol):
+@dataclass
+class PlayerWeaponMatchStats:
     name: str
     hits: int
     kills: int
-    death: int
+    deaths: int
     shots: int
     hits: int
     headshots: int
 
 
-class PlayerGameMatch(Protocol):
+@dataclass
+class PlayerGameMatch:
     id: str
     start: datetime
     end: datetime
     map: str
-    mode: str
     is_win: bool
     general_stats: PlayerMatchStats
-    weapon_stats: PlayerWeaponMatchStats
+    weapon_stats: Sequence[PlayerWeaponMatchStats]
 
 
 class PlayerAPI:
-    def get_base_info(self, player_id: PlayerID) -> Player:
-        raise NotImplementedError
-
     def get_recent_matches(
         self,
         player_id: PlayerID,
         from_: Optional[datetime] = None,
         until: Optional[datetime] = None,
     ) -> Sequence[PlayerGameMatch]:
+        """
+
+        :param player_id:
+        :param from_:
+        :param until:
+        :return:
+        :raises FetchError:
+        :raises UnrecoverableFetchError:
+        """
         raise NotImplementedError
