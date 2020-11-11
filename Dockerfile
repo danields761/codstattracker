@@ -13,11 +13,21 @@ RUN poetry install
 # Now project files is avaliable
 COPY Makefile ./
 COPY codstattracker ./codstattracker
-COPY tests ./tests
 
 # Lint & test
-RUN make lint
+RUN poetry run black --check codstattracker
+RUN poetry run isort --check codstattracker
+
+# Copy test files and lint them
+COPY tests ./tests
+RUN poetry run black --check tests
+RUN poetry run isort --check tests
+
+# Run tests
 RUN make test
 
 # Build package
 RUN make build
+
+# Main command just says that built wheel avaliable at particular location
+CMD sh -c 'echo Built wheel avaliable at dist/$(cat dist/wheel_name.txt)'

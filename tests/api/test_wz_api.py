@@ -3,22 +3,22 @@ from functools import lru_cache
 from importlib.resources import read_text
 from unittest.mock import Mock, call
 
-from pytest import fixture, raises, mark
-from requests import Session, Response
+from pytest import fixture, mark, raises
+from requests import Response, Session
 
 from codstattracker.api.exceptions import (
-    FetchError,
     PlayerNotFoundError,
     UnrecoverableFetchError,
 )
-from codstattracker.api.interfaces import (
+from codstattracker.api.models import (
+    MW_MULTIPLAYER,
+    MatchStats,
     PlayerID,
-    PlayerGameMatch,
-    PlayerMatchStats,
-    PlayerWeaponMatchStats,
+    PlayerMatch,
+    WeaponStats,
 )
-from codstattracker.api.mycallofduty.wz import PlayerAPI, GameMode
-from tests.test_api import assets
+from codstattracker.api.mycallofduty.mw import PlayerAPI
+from tests.api import assets
 
 
 @lru_cache
@@ -44,10 +44,10 @@ def test_parses_successful_response(request_session):
     request_session.get.return_value = response_mock(
         get_asset_file('success-response.json'), 200
     )
-    api = PlayerAPI(
-        request_session, GameMode.multiplayer, 'http://fake-host/api'
+    api = PlayerAPI(request_session, 'http://fake-host/api')
+    matches = api.get_recent_matches(
+        MW_MULTIPLAYER, PlayerID('battle', 'test_user', '1234')
     )
-    matches = api.get_recent_matches(PlayerID('test_user', '1234', 'battle'))
 
     assert request_session.get.mock_calls == [
         call(
@@ -58,13 +58,14 @@ def test_parses_successful_response(request_session):
     ]
 
     assert matches == [
-        PlayerGameMatch(
+        PlayerMatch(
             id='8133155045257161843',
+            game=MW_MULTIPLAYER,
             start=datetime.utcfromtimestamp(1604354327),
             end=datetime.utcfromtimestamp(1604354859),
             map='mp_m_speed',
             is_win=True,
-            general_stats=PlayerMatchStats(
+            stats=MatchStats(
                 kills=46,
                 assists=7,
                 deaths=23,
@@ -85,7 +86,7 @@ def test_parses_successful_response(request_session):
                 average_speed=234.35248,
             ),
             weapon_stats=[
-                PlayerWeaponMatchStats(
+                WeaponStats(
                     name='iw8_ar_mike4',
                     hits=59,
                     kills=14,
@@ -93,7 +94,7 @@ def test_parses_successful_response(request_session):
                     shots=271,
                     headshots=1,
                 ),
-                PlayerWeaponMatchStats(
+                WeaponStats(
                     name='iw8_sm_mpapa5',
                     hits=134,
                     kills=33,
@@ -119,7 +120,7 @@ def test_parses_successful_response(request_session):
             UnrecoverableFetchError,
             (
                 'API response is not a JSON, make '
-                'sure url or other params is valid',
+                'sure url or other params are valid',
             ),
         ),
         (
@@ -131,10 +132,10 @@ def test_parses_successful_response(request_session):
 )
 def test_errors(request_session, response_body, exc_cls, exc_args):
     request_session.get.return_value = response_mock(response_body, 200)
-    api = PlayerAPI(
-        request_session, GameMode.multiplayer, 'http://fake-host/api'
-    )
+    api = PlayerAPI(request_session, 'http://fake-host/api')
     with raises(exc_cls) as exc_info:
-        api.get_recent_matches(PlayerID('test_user', '1234', 'battle'))
+        api.get_recent_matches(
+            MW_MULTIPLAYER, PlayerID('test_user', '1234', 'battle')
+        )
 
     assert exc_info.value.args == exc_args

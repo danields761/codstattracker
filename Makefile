@@ -12,6 +12,11 @@ install-dev:
 	@echo Development dependencies installed
 
 lint:
+	@${cmd_prefix} isort --check .
+	@${cmd_prefix} black --check .
+
+fmt:
+	@${cmd_prefix} isort .
 	@${cmd_prefix} black .
 
 test:

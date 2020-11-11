@@ -1,11 +1,15 @@
-from typing import Sequence
+from __future__ import annotations
 
-from loguru import Logger
+from typing import TYPE_CHECKING
 
 from codstattracker.api.exceptions import FetchError, UnrecoverableFetchError
-from codstattracker.api.interfaces import PlayerAPI, PlayerGameMatch, PlayerID
+from codstattracker.api.interfaces import PlayerAPI
+from codstattracker.api.models import Game, PlayerID, PlayerMatch
 from codstattracker.storage.exceptions import StorageIOError
 from codstattracker.storage.interfaces import SaveStorage, StorageContext
+
+if TYPE_CHECKING:
+    from loguru import Logger
 
 
 class Poller:
@@ -13,7 +17,7 @@ class Poller:
         self,
         storage_ctx: StorageContext[SaveStorage],
         api: PlayerAPI,
-        player_ids: Sequence[PlayerID],
+        player_ids: list[tuple[Game, PlayerID]],
         logger: Logger,
     ):
         self._storage_ctx = storage_ctx
@@ -37,25 +41,27 @@ class Poller:
             raise
 
     def _regular_pool(self) -> None:
-        players_matches: dict[PlayerID, Sequence[PlayerGameMatch]] = {}
+        players_matches: dict[PlayerID, list[PlayerMatch]] = {}
 
         self._logger.info('Starting fetching player stats')
-        for player_id in self._player_ids:
-            logger = self._logger.bind(player_id=repr(player_id))
+        for game, player_id in self._player_ids:
+            logger = self._logger.bind(game=game, player_id=repr(player_id))
             logger.info('Fetching player stats')
             try:
-                matches = self._api.get_recent_matches(player_id)
+                matches = self._api.get_recent_matches(game, player_id)
             except FetchError as exc:
                 logger.warning('Skipping player stats due to error', exc=exc)
                 continue
 
             logger.info('Matches info received', num_of_matches=len(matches))
-            players_matches[player_id] = matches
+            players_matches[player_id] = list(matches)
 
         self._logger.info('Saving players stats')
         with self._storage_ctx() as save_storage:
             for player_id, matches in players_matches.items():
                 self._logger.info(
-                    'Saving player stats', player_id=repr(player_id)
+                    'Saving player stats',
+                    player_id=repr(player_id),
+                    num_matches=len(matches),
                 )
                 save_storage.save_match_series(player_id, matches)
