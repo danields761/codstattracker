@@ -6,7 +6,7 @@ authors = ["Daniel Daniels <danields761@gmail.com>"]
 license = "NPOSL-3.0"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 loguru = "*"
 requests = "^2.*"
 pydantic = "^1.7"
@@ -20,6 +20,7 @@ yoyo-migrations = "^7.2.1"
 black = "*"
 pytest = "^6.1.2"
 isort = "^5.6.4"
+flake8 = "^3.8.4"
 
 [tool.poetry.scripts]
 cst-poller = 'codstattracker.poller.main:main'

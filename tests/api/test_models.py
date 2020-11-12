@@ -1,3 +1,5 @@
+from typing import List
+
 from pytest import mark
 
 from codstattracker.api.models import Model, PlayerID
@@ -10,7 +12,7 @@ class RootModel(Model):
 
 
 class NestedModel(Model):
-    field: list[int]
+    field: List[int]
     nested: RootModel
 
 

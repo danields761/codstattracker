@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from json import JSONDecodeError
-from typing import Any, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence
 from urllib.parse import quote
 
 from pydantic import ValidationError
@@ -49,7 +49,7 @@ class PlayerAPI(_PlayerAPI):
         )
 
     @staticmethod
-    def _raise_if_resp_error(response: Response) -> dict[str, Any]:
+    def _raise_if_resp_error(response: Response) -> Dict[str, Any]:
         try:
             body = response.json()
         except JSONDecodeError:
