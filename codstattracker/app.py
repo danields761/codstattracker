@@ -5,10 +5,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Generator, Generic, Optional, Type, TypeVar
 
-import loguru
 import sentry_sdk
 from pydantic import BaseModel
 from pydantic_settings import BaseSettingsModel, load_settings
+
+from codstattracker.log import create_loguru_logger
 
 if TYPE_CHECKING:
     from loguru import Logger
@@ -69,7 +70,7 @@ def app_ctx(
     settings = _load_settings(settings_cls, settings_path)
     hub = _create_sentry_hub(settings)
 
-    logger = loguru.logger.bind(app_mode=app_mode)
+    logger = create_loguru_logger().bind(app_mode=app_mode)
     try:
         yield AppState(
             settings=settings,
