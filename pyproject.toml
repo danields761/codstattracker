@@ -23,7 +23,7 @@ isort = "^5.6.4"
 flake8 = "^3.8.4"
 
 [tool.poetry.scripts]
-cst-poller = 'codstattracker.poller.main:main'
+cst-poller = 'codstattracker.poller.__main__:main'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
