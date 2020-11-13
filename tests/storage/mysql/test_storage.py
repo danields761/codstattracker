@@ -1,9 +1,10 @@
+import copy
 from datetime import datetime, timedelta
 
 from pytest import fixture, mark
 
 from codstattracker.api.models import MW_MULTIPLAYER, PlayerID
-from codstattracker.storage.msql.models import PlayerModel
+from codstattracker.storage.msql.models import PlayerMatchModel, PlayerModel
 from codstattracker.storage.msql.storages import LoadStorage, SaveStorage
 from tests.storage.mysql.utils import random_match_model
 
@@ -142,3 +143,22 @@ def test_saves_match_stats(matches, save_storage, load_storage):
         'match_0_2',
         'new_match',
     ]
+
+
+def test_saves_same_matches_successfully(save_storage, game_mode, session_ctx):
+    player = PlayerID(platform='battle', nickname='p1', id='1234')
+    matches = [
+        random_match_model('some_id_1', game_mode, player),
+        random_match_model('some_id_2', game_mode, player),
+        random_match_model('some_id_3', game_mode, player),
+    ]
+    with session_ctx() as s:
+        SaveStorage(s).save_match_series(player, copy.deepcopy(matches[:1]))
+        s.commit()
+
+    with session_ctx() as s:
+        assert len(s.query(PlayerMatchModel).all()) == 1
+
+    with session_ctx() as s:
+        SaveStorage(s).save_match_series(player, matches[1:])
+        s.commit()

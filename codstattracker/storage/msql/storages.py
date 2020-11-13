@@ -48,8 +48,7 @@ class StorageContext(Generic[SC]):
         session = Session(self._engine)
         try:
             yield self._storage_cls(session)
-            if issubclass(self._storage_cls, SaveStorage):
-                session.commit()
+            session.commit()
         except KeyboardInterrupt:
             raise
         finally:
@@ -126,6 +125,23 @@ class SaveStorage(_SaveStorage):
     ) -> None:
         player = self._session.upsert(PlayerModel, **player_id.as_dict_flat())
 
-        self._session.add_all(
-            self._model_to_db(match, player) for match in match_series
+        matches_exists = (
+            match_id
+            for match_id, in self._session.query(PlayerMatchModel.id)
+            .filter(
+                PlayerMatchModel.id.in_(match.id for match in match_series)
+            )
+            .all()
         )
+        matches_exists_set = set(matches_exists)
+
+        matches_to_add = [
+            self._model_to_db(match, player)
+            for match in match_series
+            if match.id not in matches_exists_set
+        ]
+        if not matches_to_add:
+            return
+
+        self._session.add_all(matches_to_add)
+        self._session.flush()
