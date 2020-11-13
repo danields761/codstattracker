@@ -14,8 +14,8 @@ def create_loguru_logger():
 
     log_format = (
         '<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> '
-        '<level>{level: <5}</level> '
-        '<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>\t'
+        '<level>{level: <7}</level> '
+        '<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line: <4}</cyan> '
         '<level>{message: <40}</level> - '
         '<red>{extra}</red>'
     )
@@ -33,3 +33,6 @@ def create_loguru_logger():
     )
     logger.add(sys.stdout, format=log_format)
     return logger
+
+
+default = create_loguru_logger()

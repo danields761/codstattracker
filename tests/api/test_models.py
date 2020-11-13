@@ -2,7 +2,8 @@ from typing import List
 
 from pytest import mark
 
-from codstattracker.api.models import Model, PlayerID
+from codstattracker.api.models import PlayerID
+from codstattracker.base_model import Model
 
 
 class RootModel(Model):

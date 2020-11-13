@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from sqlalchemy import (
     JSON,
@@ -20,16 +20,16 @@ from sqlalchemy.schema import UniqueConstraint
 from codstattracker.api.models import (
     Game,
     MatchStats,
-    Model,
     PlayerID,
     PlayerMatch,
     WeaponStats,
 )
+from codstattracker.base_model import Model
 from codstattracker.storage.msql.ext import Base
 
 
-def _select_model_fields(model: Model, **fields: Any) -> dict[str, Any]:
-    model_fields = set(field.name for field in model.all_fields())
+def _select_model_fields(model: Model, **fields: Any) -> Dict[str, Any]:
+    model_fields = {field.name for field in model.all_fields()}
     return {
         name: value for name, value in fields.items() if name in model_fields
     }

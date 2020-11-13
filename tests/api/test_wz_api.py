@@ -3,10 +3,12 @@ from functools import lru_cache
 from importlib.resources import read_text
 from unittest.mock import Mock, call
 
+from _pytest.mark import param
 from pytest import fixture, mark, raises
 from requests import Response, Session
 
 from codstattracker.api.exceptions import (
+    FetchError,
     PlayerNotFoundError,
     UnrecoverableFetchError,
 )
@@ -110,10 +112,11 @@ def test_parses_successful_response(request_session):
 @mark.parametrize(
     'response_body, exc_cls, exc_args',
     [
-        (
+        param(
             get_asset_file('user-not-found-response.json'),
             PlayerNotFoundError,
             (),
+            id='Received error response',
         ),
         (
             'something meaningful',
@@ -127,6 +130,12 @@ def test_parses_successful_response(request_session):
             '{"some": "value"}',
             UnrecoverableFetchError,
             ('Incorrect response received', {'some': 'value'}),
+        ),
+        param(
+            get_asset_file('success-response-a-bit-broken.json'),
+            FetchError,
+            ('Player info decode error',),
+            id='Response generally valid but a bit broken',
         ),
     ],
 )

@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
 from json import JSONDecodeError
-from typing import Any, Dict, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence
 from urllib.parse import quote
 
 from pydantic import ValidationError
 from requests import RequestException, Response, Session
 
+from codstattracker import logging
 from codstattracker.api.exceptions import (
     FetchError,
     PlayerNotFoundError,
@@ -19,6 +22,9 @@ from codstattracker.api.mycallofduty.models import (
     ResponseBody,
     convert_api_resp_to_player_match,
 )
+
+if TYPE_CHECKING:
+    from loguru import Logger
 
 
 def _player_id_as_user_name(player_id: PlayerID) -> str:
@@ -42,11 +48,13 @@ class PlayerAPI(_PlayerAPI):
         self,
         authorized_session: Session,
         base_api_url: Optional[str] = None,
+        logger: Logger = logging.default,
     ):
         self._session = authorized_session
         self._base_api_url = base_api_url or (
             self.API_HOST + self.BASE_API_SUFFIX
         )
+        self._logger = logger
 
     @staticmethod
     def _raise_if_resp_error(response: Response) -> Dict[str, Any]:
@@ -88,6 +96,8 @@ class PlayerAPI(_PlayerAPI):
         if game.mode not in ('wz', 'mp'):
             raise ValueError('Unknown game mode given')
 
+        log = self._logger.bind(game=game, player_id=player_id)
+
         start = _datetime_as_utctimestamp(from_) if from_ else 0
         end = _datetime_as_utctimestamp(until) if until else 0
         url = (self._base_api_url + self.MATCH_HISTORY_URL_PATTERN).format(
@@ -98,13 +108,25 @@ class PlayerAPI(_PlayerAPI):
             end=end,
         )
 
+        log.debug('Requesting url', url=url)
         try:
             response = self._session.get(url)
-        except RequestException:
+        except RequestException as exc:
+            log.debug('Exception occurs', exc=exc)
             raise FetchError
 
-        body = self._raise_if_resp_error(response)
-        parsed_data = ResponseBody[MatchesDataResponse].parse_obj(body)
+        try:
+            body = self._raise_if_resp_error(response)
+        except FetchError:
+            log.warning('Error caused by content', content=response.content)
+            raise
+
+        try:
+            parsed_data = ResponseBody[MatchesDataResponse].parse_obj(body)
+        except ValidationError:
+            log.warning('Info decode failed', body=body)
+            raise FetchError('Player info decode error')
+
         return [
             convert_api_resp_to_player_match(match)
             for match in parsed_data.data.matches

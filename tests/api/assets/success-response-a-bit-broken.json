@@ -1,0 +1,400 @@
+{
+  "status": "success",
+  "data": {
+    "matches": [
+      {
+        "utcStartSeconds": 1604354327,
+        "utcEndSeconds": 1604354859,
+        "map": "mp_m_speed",
+        "mode": "war",
+        "matchID": "8133155045257161843",
+        "duration": 532000,
+        "playlistName": null,
+        "version": 1,
+        "gameType": "mp",
+        "result": "win",
+        "winningTeam": "axis",
+        "gameBattle": false,
+        "team1Score": 120,
+        "team2Score": 150,
+        "isPresentAtEnd": true,
+        "player": {
+          "team": "axis",
+          "rank": 155.0,
+          "awards": {},
+          "nemesis": "PSfix",
+          "mostKilled": "Aft3ri",
+          "username": "OBOLSTITELKISOK",
+          "uno": "13466228549829545337",
+          "clantag": "XUC",
+          "platform": "battlenet",
+          "killstreakUsage": {},
+          "loadout": [
+            {
+              "primaryWeapon": {
+                "name": "iw8_ar_mike4",
+                "label": "M4A1",
+                "imageLoot": "ui_loot_weapon_ar_mike4",
+                "imageIcon": "icon_cac_weapon_ar_mike4",
+                "variant": "0",
+                "attachments": [
+                  {
+                    "name": "barsil",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "laserrange",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "stockno",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "gripvertpro",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "xmags",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  }
+                ]
+              },
+              "secondaryWeapon": {
+                "name": "iw8_knife",
+                "label": "Combat Knife",
+                "imageLoot": "ui_loot_weapon_me_soscar",
+                "imageIcon": "icon_cac_weapon_me_soscar_knife",
+                "variant": "0",
+                "attachments": [
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  }
+                ]
+              },
+              "perks": [
+                {
+                  "name": "specialty_quick_fix",
+                  "label": "Quick Fix",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_quickfix_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_surveillance",
+                  "label": "High Alert",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_highalert_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_warhead",
+                  "label": "Amped",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_warhead_ui",
+                  "imageProgression": ""
+                }
+              ],
+              "extraPerks": [
+                {
+                  "name": "specialty_eod",
+                  "label": "E.O.D.",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_eod_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_restock",
+                  "label": "Restock",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_restock_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_hardline",
+                  "label": "Hardline",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_hardline_ui",
+                  "imageProgression": ""
+                }
+              ],
+              "killstreaks": [
+                {
+                  "name": "cruise_predator",
+                  "label": "Cruise Missile"
+                },
+                {
+                  "name": "white_phosphorus",
+                  "label": "White Phosphorus"
+                },
+                {
+                  "name": "gunship",
+                  "label": "Gunship"
+                }
+              ],
+              "tactical": {
+                "name": "equip_adrenaline",
+                "label": "Stim",
+                "image": "hud_icon_equipment_stim",
+                "imageLarge": "icon_equipment_slot_stim",
+                "progressionImage": "icon_equipment_stim"
+              },
+              "lethal": {
+                "name": "equip_semtex",
+                "label": "Semtex",
+                "image": "hud_icon_equipment_semtex",
+                "imageLarge": "icon_equipment_slot_semtex",
+                "progressionImage": "icon_equipment_semtex"
+              }
+            },
+            {
+              "primaryWeapon": {
+                "name": "iw8_sm_mpapa5",
+                "label": "MP5",
+                "imageLoot": "ui_loot_weapon_sm_mpapa5",
+                "imageIcon": "icon_cac_weapon_sm_mpapa5",
+                "variant": "0",
+                "attachments": [
+                  {
+                    "name": "reflexmini",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "stockno",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "laserbalanced",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "barsil",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "xmags",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  }
+                ]
+              },
+              "secondaryWeapon": {
+                "name": "iw8_knife",
+                "label": "Foxy Lady",
+                "imageLoot": "ui_loot_weapon_me_soscar_v43",
+                "imageIcon": "icon_cac_weapon_me_soscar_knife",
+                "variant": "42",
+                "attachments": [
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  },
+                  {
+                    "name": "none",
+                    "label": null,
+                    "image": null,
+                    "category": null
+                  }
+                ]
+              },
+              "perks": [
+                {
+                  "name": "specialty_quick_fix",
+                  "label": "Quick Fix",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_quickfix_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_surveillance",
+                  "label": "High Alert",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_highalert_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_tac_resist",
+                  "label": "Battle Hardened",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_battlehardened_ui",
+                  "imageProgression": ""
+                }
+              ],
+              "extraPerks": [
+                {
+                  "name": "specialty_eod",
+                  "label": "E.O.D.",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_eod_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_restock",
+                  "label": "Restock",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_restock_ui",
+                  "imageProgression": ""
+                },
+                {
+                  "name": "specialty_hardline",
+                  "label": "Hardline",
+                  "image": null,
+                  "imageMainUi": "icon_perk_slot_hardline_ui",
+                  "imageProgression": ""
+                }
+              ],
+              "killstreaks": [
+                {
+                  "name": "cruise_predator",
+                  "label": "Cruise Missile"
+                },
+                {
+                  "name": "white_phosphorus",
+                  "label": "White Phosphorus"
+                },
+                {
+                  "name": "gunship",
+                  "label": "Gunship"
+                }
+              ],
+              "tactical": {
+                "name": "equip_adrenaline",
+                "label": "Stim",
+                "image": "hud_icon_equipment_stim",
+                "imageLarge": "icon_equipment_slot_stim",
+                "progressionImage": "icon_equipment_stim"
+              },
+              "lethal": {
+                "name": "equip_c4",
+                "label": "C4",
+                "image": "hud_icon_equipment_c4",
+                "imageLarge": "icon_equipment_slot_c4",
+                "progressionImage": "icon_equipment_c4"
+              }
+            }
+          ]
+        },
+        "playerStats": {
+          "kills": 46.0,
+          "medalXp": 2340.0,
+          "matchXp": 3293.0,
+          "averageSpeedDuringMatch": 234.35248,
+          "scoreXp": 6155.0,
+          "accuracy": 0.20209424083769634,
+          "score": 6050.0,
+          "totalXp": 11788.0,
+          "headshots": 6.0,
+          "assists": 7.0,
+          "rank": 54.0,
+          "scorePerMinute": 622.6415094339623,
+          "distanceTraveled": 7522.9775,
+          "deaths": 23.0,
+          "kdRatio": null,
+          "shotsMissed": 762.0,
+          "timePlayed": 583.0,
+          "executions": 0.0,
+          "suicides": 0.0,
+          "seasonRank": 100.0,
+          "nearmisses": 534.0,
+          "percentTimeMoving": 99.04762,
+          "miscXp": 0.0,
+          "longestStreak": 10.0,
+          "damageDone": 5053.0,
+          "shotsFired": 955.0,
+          "damageTaken": 3574.0
+        },
+        "weaponStats": {
+          "iw8_ar_mike4": {
+            "hits": 59.0,
+            "kills": 14.0,
+            "headshots": 1.0,
+            "loadoutIndex": 0.0,
+            "shots": 271.0,
+            "startingWeaponXp": 113200.0,
+            "deaths": 10.0,
+            "xpEarned": 1850.0
+          },
+          "iw8_sm_mpapa5": {
+            "hits": 134.0,
+            "kills": 33.0,
+            "headshots": 5.0,
+            "loadoutIndex": 1.0,
+            "shots": 684.0,
+            "startingWeaponXp": 77500.0,
+            "deaths": 13.0,
+            "xpEarned": 4280.0
+          }
+        },
+        "allPlayers": null,
+        "arena": false,
+        "privateMatch": false
+      }
+    ]
+  }
+}
