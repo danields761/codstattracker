@@ -26,9 +26,8 @@ from codstattracker.api.models import (
 from codstattracker.storage.exceptions import StorageIOError
 from codstattracker.storage.interfaces import LoadStorage as _LoadStorage
 from codstattracker.storage.interfaces import SaveStorage as _SaveStorage
-from codstattracker.storage.msql.ext import Session
-from codstattracker.storage.msql.models import (
-    GameModel,
+from codstattracker.storage.sql.ext import Session
+from codstattracker.storage.sql.models import (
     PlayerMatchModel,
     PlayerModel,
     WeaponStatsModel,
@@ -102,8 +101,6 @@ class SaveStorage(_SaveStorage):
             weapon_stats: Sequence[WeaponStats],
             **match_kwargs: Any,
         ) -> PlayerMatchModel:
-            game = self._session.upsert(GameModel, **game.as_dict_flat())
-
             return PlayerMatchModel(
                 game=game,
                 player=player,

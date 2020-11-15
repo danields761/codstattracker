@@ -1,10 +1,11 @@
 import random
 from datetime import datetime, timedelta
 
-from codstattracker.storage.msql.models import PlayerMatchModel
+from codstattracker.api.models import BattleRoyaleStats, Game
+from codstattracker.storage.sql.models import PlayerMatchModel
 
 
-def random_match_model(id_, game_mode, player, start=None, end=None):
+def random_match_model(id_, game, player, start=None, end=None):
     int_fields = (
         'kills',
         'assists',
@@ -37,9 +38,16 @@ def random_match_model(id_, game_mode, player, start=None, end=None):
         raise ValueError(
             'Either start and end args must be defined or omitted'
         )
+
+    if game is Game.mw_wz:
+        br_stats = BattleRoyaleStats(75, 150, random.randint(1, 150))
+    else:
+        br_stats = None
+
     return PlayerMatchModel(
         id=id_,
-        game=game_mode,
+        game=game,
+        br_stats=br_stats,
         player=player,
         is_win=random.choice((False, True)),
         weapon_stats=[],

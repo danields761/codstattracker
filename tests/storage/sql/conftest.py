@@ -3,9 +3,8 @@ from contextlib import contextmanager
 from pytest import fixture
 from sqlalchemy import create_engine
 
-from codstattracker.api.models import MW_MULTIPLAYER
-from codstattracker.storage.msql.ext import Session
-from codstattracker.storage.msql.models import Base, GameModel
+from codstattracker.storage.sql.ext import Session
+from codstattracker.storage.sql.models import Base
 
 
 @fixture
@@ -33,9 +32,3 @@ def session_ctx(engine):
             s.close()
 
     return ctx
-
-
-@fixture
-def game_mode(session_ctx):
-    with session_ctx() as s:
-        return s.upsert(GameModel, **MW_MULTIPLAYER.as_dict_flat())

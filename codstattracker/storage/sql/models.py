@@ -2,22 +2,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from sqlalchemy import (
-    JSON,
-    Boolean,
-    Column,
-    DateTime,
-    Float,
-    ForeignKey,
-    Integer,
-    Interval,
-    String,
-    and_,
-)
+from sqlalchemy import JSON, Boolean, Column, DateTime
+from sqlalchemy import Enum as SEnum
+from sqlalchemy import Float, ForeignKey, Integer, Interval, String, and_
 from sqlalchemy.orm import RelationshipProperty, relationship
 from sqlalchemy.schema import UniqueConstraint
 
 from codstattracker.api.models import (
+    BattleRoyaleStats,
     Game,
     MatchStats,
     PlayerID,
@@ -25,7 +17,7 @@ from codstattracker.api.models import (
     WeaponStats,
 )
 from codstattracker.base_model import Model
-from codstattracker.storage.msql.ext import Base
+from codstattracker.storage.sql.ext import Base
 
 
 def _select_model_fields(model: Model, **fields: Any) -> Dict[str, Any]:
@@ -33,15 +25,6 @@ def _select_model_fields(model: Model, **fields: Any) -> Dict[str, Any]:
     return {
         name: value for name, value in fields.items() if name in model_fields
     }
-
-
-class GameModel(Game, Base):
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    mode = Column(String, nullable=False)
-
-    __tablename__ = 'games'
-    __tableargs__ = (UniqueConstraint(name, mode),)
 
 
 class PlayerModel(PlayerID, Base):
@@ -83,18 +66,19 @@ class WeaponStatsModel(WeaponStats, Base):
         self.match_id = match_id
 
 
+class BrStatsModel(BattleRoyaleStats, Base):
+    id = Column(Integer, primary_key=True)
+    match_id = Column(String, ForeignKey('players_matches_stats.id'))
+
+    teams_count = Column(Integer, nullable=False)
+    players_count = Column(Integer, nullable=False)
+    placement = Column(Integer, nullable=False)
+
+    __tablename__ = 'br_stats'
+    __tableargs__ = (UniqueConstraint(match_id),)
+
+
 class PlayerMatchModel(PlayerMatch, MatchStats, Base):
-    class GameComparator(RelationshipProperty.Comparator):
-        def __eq__(self, other):
-            if not isinstance(other, Game) or isinstance(other, GameModel):
-                return super().__eq__(other)
-
-            return and_(
-                self.__clause_element__(),
-                GameModel.name == other.name,
-                GameModel.mode == other.mode,
-            )
-
     class PlayerComparator(RelationshipProperty.Comparator):
         def __eq__(self, other):
             if not isinstance(other, PlayerID) or isinstance(
@@ -117,20 +101,19 @@ class PlayerMatchModel(PlayerMatch, MatchStats, Base):
         lazy='joined',
         innerjoin=True,
     )
-    game_id = Column(Integer, ForeignKey(GameModel.id))
 
     id = Column(String, primary_key=True)
-    game = relationship(
-        GameModel,
-        comparator_factory=GameComparator,
-        uselist=False,
-        lazy='joined',
-        innerjoin=True,
-    )
+    game = Column(SEnum(Game))
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     map = Column(String, nullable=False)
     is_win = Column(Boolean, nullable=False)
+    br_stats = relationship(
+        BrStatsModel,
+        innerjoin=False,
+        lazy='joined',
+        uselist=False,
+    )
     weapon_stats = relationship(WeaponStatsModel, lazy='joined')
 
     kills = Column(Integer, nullable=False)
@@ -156,19 +139,26 @@ class PlayerMatchModel(PlayerMatch, MatchStats, Base):
 
     def __init__(
         self,
+        game: Game,
         player: Optional[PlayerModel] = None,
         player_id: Optional[int] = None,
-        game: Optional[GameModel] = None,
-        game_id: Optional[int] = None,
+        br_stats: Optional[BattleRoyaleStats] = None,
         **kwargs,
     ):
+        if br_stats:
+            assert game is not Game.mw_mp
+            save_br_stats = BrStatsModel(**br_stats.as_dict_flat())
+        else:
+            save_br_stats = None
+
         PlayerMatch.__init__(
             self,
             game=game,
             stats=self,
+            br_stats=save_br_stats,
             **_select_model_fields(PlayerMatch, **kwargs),
         )
         MatchStats.__init__(self, **_select_model_fields(MatchStats, **kwargs))
         self.player = player
         self.player_id = player_id
-        self.game_id = game_id
+        self.game = game

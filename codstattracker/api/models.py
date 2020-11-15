@@ -1,21 +1,29 @@
 from __future__ import annotations
 
+from dataclasses import field
 from datetime import datetime, timedelta
-from typing import Sequence
+from enum import Enum
+from typing import Optional, Sequence
 
 from codstattracker.base_model import Model
 
 
-class Game(Model):
-    name: str
-    mode: str
+class Game(str, Enum):
+    mw_mp = 'mw:mp'
+    mw_wz = 'mw:wz'
+
+    @property
+    def name(self) -> str:
+        name, _ = self.value.split(':')
+        return name
+
+    @property
+    def mode(self) -> str:
+        _, mode = self.value.split(':')
+        return mode
 
     def __repr__(self) -> str:
-        return f'{self.name}:{self.mode}'
-
-
-MW_MULTIPLAYER = Game(name='mw', mode='mp')
-MW_WARZONE = Game(name='mw', mode='wz')
+        return repr(self.value)
 
 
 class PlayerID(Model, unsafe_hash=True):
@@ -58,6 +66,12 @@ class WeaponStats(Model):
     headshots: int
 
 
+class BattleRoyaleStats(Model):
+    teams_count: int
+    players_count: int
+    placement: int
+
+
 class PlayerMatch(Model):
     id: str
     game: Game
@@ -66,4 +80,5 @@ class PlayerMatch(Model):
     map: str
     is_win: bool
     stats: MatchStats
-    weapon_stats: Sequence[WeaponStats]
+    weapon_stats: Sequence[WeaponStats] = field(default_factory=list)
+    br_stats: Optional[BattleRoyaleStats] = None

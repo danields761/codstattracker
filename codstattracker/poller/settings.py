@@ -4,7 +4,7 @@ from typing import Callable, Iterable, List, Pattern, Tuple, Type
 from pydantic import BaseModel
 from pydantic.validators import str_validator
 
-from codstattracker.api.models import Game as _Game
+from codstattracker.api.models import Game
 from codstattracker.api.models import PlayerID as _PlayerID
 from codstattracker.app import BaseAppSettings
 from codstattracker.base_model import Model
@@ -20,14 +20,6 @@ def _create_validators(
         return cls(*match.groups())
 
     return str_validator, from_string
-
-
-class Game(_Game):
-    pattern = re.compile(r'(\w+):(\w+)')
-
-    @classmethod
-    def __get_validators__(cls) -> Iterable[Callable]:
-        yield from _create_validators(_Game, cls.pattern)
 
 
 class PlayerID(_PlayerID):

@@ -128,6 +128,6 @@ class PlayerAPI(_PlayerAPI):
             raise FetchError('Player info decode error')
 
         return [
-            convert_api_resp_to_player_match(match)
+            convert_api_resp_to_player_match(match, game)
             for match in parsed_data.data.matches
         ]
