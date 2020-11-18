@@ -2,7 +2,7 @@ poetry_cmd=poetry
 cmd_prefix=${poetry_cmd} run
 build_artifact_name=dist/build.whl
 WHEEL_NAME_FILE ?= dist/wheel_name.txt
-
+DB_TYPE ?= sqlite
 
 install-base:
 	@pip install poetry
@@ -22,6 +22,10 @@ fmt:
 
 test:
 	@${cmd_prefix} pytest .
+
+gen-migrations:
+	@mkdir -p ${DB_TYPE}_migrations
+	@${cmd_prefix} python generate_migrations.py ${DB_TYPE} ${DB_TYPE}_migrations
 
 build:
 	@{ \

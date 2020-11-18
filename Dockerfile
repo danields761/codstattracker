@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 # Setup
 RUN pip install poetry wheel
+RUN poetry config virtualenvs.in-project true
 
 # Dependencies installation
 COPY pyproject.toml ./
@@ -26,8 +27,13 @@ RUN poetry run isort --check tests
 # Run tests
 RUN make test
 
-# Build package
-RUN make build
+# Copy serving files
+COPY migrations ./migrations
+COPY alembic.ini ./
+COPY generate_migrations.py ./
+
+# Fix fucking alembic
+ENV PYTHONPATH=.
 
 # Main command just says that built wheel avaliable at particular location
-CMD sh -c 'echo Built wheel avaliable at dist/$(cat dist/wheel_name.txt)'
+CMD make

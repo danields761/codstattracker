@@ -21,6 +21,7 @@ black = "*"
 pytest = "^6.1.2"
 isort = "^5.6.4"
 flake8 = "^3.8.4"
+alembic = "^1.4.3"
 
 [tool.poetry.scripts]
 cst-poller = 'codstattracker.poller.__main__:main'
