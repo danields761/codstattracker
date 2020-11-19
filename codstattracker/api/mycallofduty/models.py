@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
-from typing import Generic, Optional, TypeVar
+from dataclasses import field
+from datetime import datetime, timedelta, timezone
+from typing import Any, Generic, Optional, TypeVar
 
 from pydantic import BaseModel as _BaseModel
 from pydantic.generics import GenericModel
@@ -90,8 +91,19 @@ class MatchesDataResponse(BaseResponse):
     matches: list[MatchResponse]
 
 
+class TrackableMatchStats(PlayerMatch):
+    _entity_source: dict[str, Any] = field(default_factory=dict)
+    _entity_meta: dict[str, Any] = field(default_factory=dict)
+
+    def get_entity_info(self) -> tuple[dict[str, Any], dict[str, Any]]:
+        return self._entity_source, self._entity_meta
+
+
 def convert_api_resp_to_player_match(
-    api_resp: MatchResponse, game: Game
+    api_resp: MatchResponse,
+    game: Game,
+    entity_source: Optional[dict[str, Any]] = None,
+    entity_meta: Optional[dict[str, Any]] = None,
 ) -> PlayerMatch:
     ps = api_resp.player_stats
     if api_resp.game_type == 'wz':
@@ -105,11 +117,25 @@ def convert_api_resp_to_player_match(
         br_stats = None
         is_win = api_resp.winning_team == api_resp.player.team
 
-    return PlayerMatch(
+    if entity_meta and entity_source:
+        cls = TrackableMatchStats
+        add_kwargs = {
+            '_entity_source': entity_source,
+            '_entity_meta': entity_meta,
+        }
+    else:
+        cls = PlayerMatch
+        add_kwargs = {}
+
+    return cls(
         id=api_resp.match_id,
         game=game,
-        start=datetime.utcfromtimestamp(api_resp.utc_start_seconds),
-        end=datetime.utcfromtimestamp(api_resp.utc_end_seconds),
+        start=datetime.utcfromtimestamp(api_resp.utc_start_seconds).replace(
+            tzinfo=timezone.utc
+        ),
+        end=datetime.utcfromtimestamp(api_resp.utc_end_seconds).replace(
+            tzinfo=timezone.utc
+        ),
         map=api_resp.map,
         is_win=is_win,
         br_stats=br_stats,
@@ -144,4 +170,5 @@ def convert_api_resp_to_player_match(
             )
             for weapon_name, weapon_stat in api_resp.weapon_stats.items()
         ],
+        **add_kwargs,
     )

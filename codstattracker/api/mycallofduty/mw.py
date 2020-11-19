@@ -48,16 +48,23 @@ class PlayerAPI(_PlayerAPI):
         self,
         authorized_session: Session,
         base_api_url: Optional[str] = None,
+        collect_source_info_data: bool = False,
         logger: Logger = logging.default,
     ):
         self._session = authorized_session
         self._base_api_url = base_api_url or (
             self.API_HOST + self.BASE_API_SUFFIX
         )
+        self._collect_source_info_data = collect_source_info_data
         self._logger = logger
 
     @staticmethod
     def _raise_if_resp_error(response: Response) -> dict[str, Any]:
+        if response.status_code != 200:
+            raise UnrecoverableFetchError(
+                f'Unexpected status code {response.status_code}'
+            )
+
         try:
             body = response.json()
         except JSONDecodeError:
@@ -127,7 +134,12 @@ class PlayerAPI(_PlayerAPI):
             log.warning('Info decode failed', body=body)
             raise FetchError('Player info decode error')
 
+        if self._collect_source_info_data:
+            add_args = (body, {'url': url})
+        else:
+            add_args = ()
+
         return [
-            convert_api_resp_to_player_match(match, game)
+            convert_api_resp_to_player_match(match, game, *add_args)
             for match in parsed_data.data.matches
         ]

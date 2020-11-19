@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from importlib.resources import read_text
 
 from codstattracker.api.models import (
@@ -13,8 +13,8 @@ MATCH_1_IN = read_text(__package__, 'success-response.json')
 MATCH_1_OUT = PlayerMatch(
     id='8133155045257161843',
     game=Game.mw_mp,
-    start=datetime.utcfromtimestamp(1604354327),
-    end=datetime.utcfromtimestamp(1604354859),
+    start=datetime.utcfromtimestamp(1604354327).replace(tzinfo=timezone.utc),
+    end=datetime.utcfromtimestamp(1604354859).replace(tzinfo=timezone.utc),
     map='mp_m_speed',
     is_win=True,
     stats=MatchStats(
@@ -61,8 +61,8 @@ MATCH_2_IN = read_text(__package__, 'success-response-wz.json')
 MATCH_2_OUT = PlayerMatch(
     id='13733821167676440496',
     game=Game.mw_wz,
-    start=datetime.utcfromtimestamp(1605354410),
-    end=datetime.utcfromtimestamp(1605356002),
+    start=datetime.utcfromtimestamp(1605354410).replace(tzinfo=timezone.utc),
+    end=datetime.utcfromtimestamp(1605356002).replace(tzinfo=timezone.utc),
     map='mp_don3',
     is_win=False,
     stats=MatchStats(

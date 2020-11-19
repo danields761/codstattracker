@@ -6,10 +6,7 @@ from typing import Any, Iterable, Optional, Protocol, Type, runtime_checkable
 
 @runtime_checkable
 class TrackableEntity(Protocol):
-    def get_entity_source(self) -> dict[str, Any]:
-        raise NotImplementedError
-
-    def get_entity_source_meta(self) -> dict[str, Any]:
+    def get_entity_info(self) -> tuple[dict[str, Any], dict[str, Any]]:
         raise NotImplementedError
 
 
@@ -42,8 +39,8 @@ class Model:
             mro = set(self_cls.__mro__)
             if as_parent not in mro:
                 raise TypeError(
-                    f'Given model {as_parent.__name__!r} is not parent of '
-                    f'current model {self_cls.__name__!r}'
+                    f'Given model {as_parent.__name__!r} is not '
+                    f'parent of current model {self_cls.__name__!r}'
                 )
 
             all_fields = as_parent.all_fields()

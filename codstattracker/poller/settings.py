@@ -1,7 +1,8 @@
 import re
-from typing import Callable, Iterable, List, Pattern, Tuple, Type
+from pathlib import Path
+from typing import Callable, Iterable, List, Optional, Pattern, Tuple, Type
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from pydantic.validators import str_validator
 
 from codstattracker.api.models import Game
@@ -38,6 +39,24 @@ class API(BaseModel):
 class DB(BaseModel):
     #: Database URI
     uri: str
+
+    #: Matches log file
+    log_file: Optional[Path] = None
+
+    @validator('log_file')
+    def log_file_must_be_writable(
+        cls, log_file: Optional[Path]
+    ) -> Optional[Path]:
+        if log_file is None:
+            return None
+
+        try:
+            with open(log_file, 'wt'):
+                pass
+        except PermissionError:
+            raise ValueError('Log file must be writable!')
+
+        return log_file
 
 
 class Settings(BaseAppSettings):

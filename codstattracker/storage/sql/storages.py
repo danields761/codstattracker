@@ -8,7 +8,6 @@ from typing import (
     Generic,
     Optional,
     Sequence,
-    Type,
     TypeVar,
     cast,
 )
@@ -33,14 +32,16 @@ from codstattracker.storage.sql.models import (
     WeaponStatsModel,
 )
 
-SC = TypeVar('SC', _LoadStorage, _SaveStorage)
+SC = TypeVar('SC')
 C = TypeVar('C', bound=Callable)
 
 
 class StorageContext(Generic[SC]):
-    def __init__(self, client: Engine, storage_cls: Type[SC]):
+    def __init__(
+        self, client: Engine, storage_factory: Callable[[Session], SC]
+    ):
         self._engine = client
-        self._storage_cls = storage_cls
+        self._storage_cls = storage_factory
 
     @contextmanager
     def __call__(self) -> Generator[SC, None, None]:

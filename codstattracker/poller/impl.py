@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, dict, list, tuple
+from typing import TYPE_CHECKING
 
 from codstattracker.api.exceptions import FetchError, UnrecoverableFetchError
 from codstattracker.api.interfaces import PlayerAPI
