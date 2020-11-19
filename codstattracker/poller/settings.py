@@ -47,5 +47,5 @@ class Settings(BaseAppSettings):
     #: API-settings
     api: API
 
-    #: List of processed players with mode
+    #: list of processed players with mode
     players_to_poll: List[Tuple[Game, PlayerID]]

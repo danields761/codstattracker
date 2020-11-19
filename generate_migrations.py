@@ -1,7 +1,7 @@
 import argparse
 import re
 from pathlib import Path
-from typing import Iterable, Callable
+from typing import Callable, Iterable
 
 
 def get_alembic_ini_path() -> Path:
@@ -50,7 +50,7 @@ def list_migrations() -> list[tuple[str, str, Path]]:
 
 
 def get_alembic_main(alembic_executable: str) -> Callable:
-    from subprocess import run, CalledProcessError
+    from subprocess import CalledProcessError, run
 
     def main(*args) -> str:
         new_args = [alembic_executable] + [str(arg) for arg in args]

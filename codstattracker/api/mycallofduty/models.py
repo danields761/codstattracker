@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Dict, Generic, List, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from pydantic import BaseModel as _BaseModel
 from pydantic.generics import GenericModel
@@ -40,7 +40,7 @@ class MatchResponse(BaseResponse):
         team: str
         nemesis: Optional[str] = None
         most_killed: Optional[str] = None
-        killstreak_usage: Dict[str, int] = {}
+        killstreak_usage: dict[str, int] = {}
 
     class PlayerStats(BaseResponse):
         kills: int
@@ -83,11 +83,11 @@ class MatchResponse(BaseResponse):
 
     player: Player
     player_stats: PlayerStats
-    weapon_stats: Dict[str, WeaponStats] = {}
+    weapon_stats: dict[str, WeaponStats] = {}
 
 
 class MatchesDataResponse(BaseResponse):
-    matches: List[MatchResponse]
+    matches: list[MatchResponse]
 
 
 def convert_api_resp_to_player_match(

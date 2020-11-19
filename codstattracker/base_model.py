@@ -1,7 +1,16 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, Dict, Iterable, Optional, Type
+from typing import Any, Iterable, Optional, Protocol, Type, runtime_checkable
+
+
+@runtime_checkable
+class TrackableEntity(Protocol):
+    def get_entity_source(self) -> dict[str, Any]:
+        raise NotImplementedError
+
+    def get_entity_source_meta(self) -> dict[str, Any]:
+        raise NotImplementedError
 
 
 class Model:
@@ -22,12 +31,12 @@ class Model:
             except TypeError:
                 pass
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
     def as_dict_flat(
         self, as_parent: Optional[Type[Model]] = None
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if as_parent:
             self_cls = type(self)
             mro = set(self_cls.__mro__)

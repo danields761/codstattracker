@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from sqlalchemy import JSON, Boolean, Column, DateTime
 from sqlalchemy import Enum as SEnum
@@ -20,7 +20,7 @@ from codstattracker.base_model import Model
 from codstattracker.storage.sql.ext import Base
 
 
-def _select_model_fields(model: Model, **fields: Any) -> Dict[str, Any]:
+def _select_model_fields(model: Model, **fields: Any) -> dict[str, Any]:
     model_fields = {field.name for field in model.all_fields()}
     return {
         name: value for name, value in fields.items() if name in model_fields

@@ -1,8 +1,8 @@
 import sys
-from typing import Any, Dict
+from typing import Any
 
 
-def _loguru_patcher(log_record: Dict[str, Any]) -> None:
+def _loguru_patcher(log_record: dict[str, Any]) -> None:
     log_record['extra'] = ' '.join(
         f'{var_name}={value}'
         for var_name, value in log_record['extra'].items()

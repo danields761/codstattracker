@@ -24,6 +24,9 @@ class BaseAppSettings(BaseSettingsModel):
     class Config:
         env_prefix = 'CST'
 
+    #: Current environment
+    env: str = 'debug'
+
     #: Sentry settings
     sentry: Optional[Sentry] = None
 
@@ -39,7 +42,9 @@ class AppState(Generic[SC]):
 
 
 def _load_settings(
-    settings_cls: Type[SC], settings_path: Optional[Path] = None
+    settings_cls: Type[SC],
+    settings_path: Optional[Path] = None,
+    settings_type_hint: Optional[str] = None,
 ) -> SC:
     class SettingsLoc(BaseSettingsModel):
         class Config:
@@ -50,24 +55,29 @@ def _load_settings(
     if not settings_path:
         settings_path = load_settings(SettingsLoc, load_env=True).settings_path
 
-    return load_settings(settings_cls, settings_path, load_env=True)
+    return load_settings(
+        settings_cls,
+        settings_path,
+        type_hint=settings_type_hint,
+        load_env=True,
+    )
 
 
 def _create_sentry_hub(settings: BaseAppSettings) -> Optional[sentry_sdk.Hub]:
-    sentry_sdk.init(dsn=settings.sentry.dsn)
     if not settings.sentry:
         return None
-    sentry_sdk.init(dsn=settings.sentry.dsn)
+    sentry_sdk.init(dsn=settings.sentry.dsn, environment=settings.env)
     return sentry_sdk.Hub.current
 
 
 @contextmanager
-def app_ctx(
+def main_ctx(
     app_mode: str,
-    settings_cls: Type[SC],
+    settings_cls: Type[SC] = BaseAppSettings,
     settings_path: Optional[Path] = None,
+    settings_type_hint: Optional[str] = None,
 ) -> Generator[AppState, None, None]:
-    settings = _load_settings(settings_cls, settings_path)
+    settings = _load_settings(settings_cls, settings_path, settings_type_hint)
     hub = _create_sentry_hub(settings)
 
     logger = logging.default.bind(app_mode=app_mode)

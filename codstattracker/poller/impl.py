@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Tuple
+from typing import TYPE_CHECKING, dict, list, tuple
 
 from codstattracker.api.exceptions import FetchError, UnrecoverableFetchError
 from codstattracker.api.interfaces import PlayerAPI
@@ -17,7 +17,7 @@ class Poller:
         self,
         storage_ctx: StorageContext[SaveStorage],
         api: PlayerAPI,
-        player_ids: List[Tuple[Game, PlayerID]],
+        player_ids: list[tuple[Game, PlayerID]],
         logger: Logger,
     ):
         self._storage_ctx = storage_ctx
@@ -41,7 +41,7 @@ class Poller:
             raise
 
     def _regular_pool(self) -> None:
-        players_matches: Dict[PlayerID, List[PlayerMatch]] = {}
+        players_matches: dict[PlayerID, list[PlayerMatch]] = {}
 
         self._logger.info('Starting fetching player stats')
         for game, player_id in self._player_ids:

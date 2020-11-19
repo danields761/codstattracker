@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import create_engine
 
 from codstattracker.api import mycallofduty
-from codstattracker.app import app_ctx
+from codstattracker.app import main_ctx
 from codstattracker.poller.impl import Poller
 from codstattracker.poller.settings import Settings
 from codstattracker.storage import sql
@@ -23,14 +23,14 @@ def _create_poller(settings: Settings, logger: Logger) -> Poller:
     return Poller(storage_ctx, api, settings.players_to_poll, logger)
 
 
-def main():
+def main(*args: str) -> None:
     parser = argparse.ArgumentParser(
         'cst-poller',
     )
     parser.add_argument('settings_path', type=Path)
-    parsed = parser.parse_args()
+    parsed = parser.parse_args(args if args else None)
 
-    with app_ctx('poller', Settings, parsed.settings_path) as app:
+    with main_ctx('poller', Settings, parsed.settings_path) as app:
         poller = _create_poller(app.settings, app.logger)
         poller.regular_pool()
 
