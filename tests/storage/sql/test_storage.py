@@ -4,15 +4,21 @@ from datetime import datetime, timedelta
 from pytest import fixture, mark
 
 from codstattracker.api.models import Game, PlayerID
-from codstattracker.storage.sql.models import PlayerMatchModel, PlayerModel
+from codstattracker.storage.sql.models import (
+    PlayerMatchLogModel,
+    PlayerMatchModel,
+    PlayerModel,
+)
 from codstattracker.storage.sql.storages import LoadStorage, SaveStorage
 from tests.storage.sql.utils import random_match_model
+
+PLAYER_1_ID = PlayerID(platform='battle', nickname='p1', id='1234')
 
 
 @fixture
 def players():
     return (
-        PlayerModel(db_id=1, platform='battle', nickname='p1', id='1234'),
+        PlayerModel(**PLAYER_1_ID.as_dict_flat()),
         PlayerModel(db_id=2, platform='ps', nickname='p2', id='4321'),
     )
 
@@ -59,7 +65,7 @@ def save_storage(session):
     'player_id, matches_ids',
     [
         (
-            PlayerID(platform='battle', nickname='p1', id='1234'),
+            PLAYER_1_ID,
             [
                 'match_0_0',
                 'match_0_1',
@@ -85,19 +91,19 @@ def test_load_storage(matches, load_storage, player_id, matches_ids):
     'player_id, start, end, matches_ids',
     [
         (
-            PlayerID(platform='battle', nickname='p1', id='1234'),
+            PLAYER_1_ID,
             datetime(year=2010, month=1, day=1, hour=12, minute=0, second=0),
             datetime(year=2010, month=1, day=1, hour=12, minute=10, second=0),
             ['match_0_0'],
         ),
         (
-            PlayerID(platform='battle', nickname='p1', id='1234'),
+            PLAYER_1_ID,
             datetime(year=2010, month=1, day=1, hour=12, minute=0, second=0),
             datetime(year=2010, month=1, day=1, hour=12, minute=20, second=0),
             ['match_0_0', 'match_0_1'],
         ),
         (
-            PlayerID(platform='battle', nickname='p1', id='1234'),
+            PLAYER_1_ID,
             datetime(year=2010, month=1, day=1, hour=12, minute=20, second=0),
             datetime(year=2010, month=1, day=1, hour=12, minute=50, second=0),
             ['match_0_1', 'match_0_2'],
@@ -118,14 +124,13 @@ def test_load_storage_by_time_ranges(
 
 
 def test_saves_match_stats(matches, save_storage, load_storage):
-    player = PlayerID(platform='battle', nickname='p1', id='1234')
     save_storage.save_match_series(
-        player,
+        PLAYER_1_ID,
         [
             random_match_model(
                 'new_mp_match',
                 Game.mw_mp,
-                player,
+                PLAYER_1_ID,
                 datetime(
                     year=2010, month=1, day=1, hour=13, minute=0, second=0
                 ),
@@ -136,7 +141,7 @@ def test_saves_match_stats(matches, save_storage, load_storage):
             random_match_model(
                 'new_wz_match',
                 Game.mw_wz,
-                player,
+                PLAYER_1_ID,
                 datetime(
                     year=2010, month=1, day=1, hour=13, minute=0, second=0
                 ),
@@ -147,31 +152,52 @@ def test_saves_match_stats(matches, save_storage, load_storage):
         ],
     )
 
-    mp_load_result = load_storage.load_last_matches(Game.mw_mp, player)
+    mp_load_result = load_storage.load_last_matches(Game.mw_mp, PLAYER_1_ID)
     assert [match.id for match in mp_load_result] == [
         'match_0_0',
         'match_0_1',
         'match_0_2',
         'new_mp_match',
     ]
-    wz_load_result = load_storage.load_last_matches(Game.mw_wz, player)
+    wz_load_result = load_storage.load_last_matches(Game.mw_wz, PLAYER_1_ID)
     assert [match.id for match in wz_load_result] == ['new_wz_match']
 
 
 def test_repeated_save_successful(save_storage, session_ctx):
-    player = PlayerID(platform='battle', nickname='p1', id='1234')
     matches = [
-        random_match_model('some_id_1', Game.mw_mp, player),
-        random_match_model('some_id_2', Game.mw_mp, player),
-        random_match_model('some_id_3', Game.mw_mp, player),
+        random_match_model('some_id_1', Game.mw_mp, PLAYER_1_ID),
+        random_match_model('some_id_2', Game.mw_mp, PLAYER_1_ID),
+        random_match_model('some_id_3', Game.mw_mp, PLAYER_1_ID),
     ]
     with session_ctx() as s:
-        SaveStorage(s).save_match_series(player, copy.deepcopy(matches[:1]))
+        SaveStorage(s).save_match_series(
+            PLAYER_1_ID, copy.deepcopy(matches[:1])
+        )
         s.commit()
 
     with session_ctx() as s:
         assert len(s.query(PlayerMatchModel).all()) == 1
 
     with session_ctx() as s:
-        SaveStorage(s).save_match_series(player, matches[1:])
+        SaveStorage(s).save_match_series(PLAYER_1_ID, matches[1:])
         s.commit()
+
+
+def test_saves_matches_logs(session):
+    tracked_match = random_match_model('tracked', Game.mw_mp, PLAYER_1_ID)
+    # Assigning instance attribute is enough to satisfy
+    #  `runtime_checkable` protocol
+    tracked_match.get_entity_info = lambda: (
+        {'test': 'data'},
+        {'test': 'meta'},
+    )
+    other_match = random_match_model('other', Game.mw_mp, PLAYER_1_ID)
+
+    save_storage = SaveStorage(session, save_matches_logs=True)
+    save_storage.save_match_series(PLAYER_1_ID, [tracked_match, other_match])
+    session.commit()
+
+    log_model = session.query(PlayerMatchLogModel).one()
+    assert log_model.match_id == 'tracked'
+    assert log_model.source == {'test': 'data'}
+    assert log_model.meta == {'test': 'meta'}

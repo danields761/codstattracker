@@ -6,6 +6,7 @@ from typing import (
     Callable,
     Generator,
     Generic,
+    Iterable,
     Optional,
     Sequence,
     TypeVar,
@@ -22,11 +23,13 @@ from codstattracker.api.models import (
     PlayerMatch,
     WeaponStats,
 )
+from codstattracker.base_model import TrackableEntity
 from codstattracker.storage.exceptions import StorageIOError
 from codstattracker.storage.interfaces import LoadStorage as _LoadStorage
 from codstattracker.storage.interfaces import SaveStorage as _SaveStorage
 from codstattracker.storage.sql.ext import Session
 from codstattracker.storage.sql.models import (
+    PlayerMatchLogModel,
     PlayerMatchModel,
     PlayerModel,
     WeaponStatsModel,
@@ -90,8 +93,9 @@ class LoadStorage(_LoadStorage):
 
 
 class SaveStorage(_SaveStorage):
-    def __init__(self, session: Session):
+    def __init__(self, session: Session, save_matches_logs: bool = False):
         self._session = session
+        self._save_matches_logs = save_matches_logs
 
     def _model_to_db(
         self, match: PlayerMatch, player: PlayerModel
@@ -115,6 +119,18 @@ class SaveStorage(_SaveStorage):
 
         return inner(**match.as_dict_flat(PlayerMatch))
 
+    @staticmethod
+    def _create_matches_logs(
+        matches: Sequence[PlayerMatch],
+    ) -> Iterable[PlayerMatchLogModel]:
+        for match in matches:
+            if not isinstance(match, TrackableEntity):
+                continue
+            source, meta = match.get_entity_info()
+            yield PlayerMatchLogModel(
+                match_id=match.id, source=source, meta=meta
+            )
+
     @_reraise_disconnection_error
     def save_match_series(
         self,
@@ -123,7 +139,7 @@ class SaveStorage(_SaveStorage):
     ) -> None:
         player = self._session.upsert(PlayerModel, **player_id.as_dict_flat())
 
-        matches_exists = (
+        matches_exists_ids = set(
             match_id
             for match_id, in self._session.query(PlayerMatchModel.id)
             .filter(
@@ -131,15 +147,19 @@ class SaveStorage(_SaveStorage):
             )
             .all()
         )
-        matches_exists_set = set(matches_exists)
-
         matches_to_add = [
             self._model_to_db(match, player)
             for match in match_series
-            if match.id not in matches_exists_set
+            if match.id not in matches_exists_ids
         ]
         if not matches_to_add:
             return
 
         self._session.add_all(matches_to_add)
+        if self._save_matches_logs:
+            # sqlalchemy unit of work can't order inserts when model
+            # relations are not explicit
+            self._session.flush()
+            self._session.add_all(self._create_matches_logs(match_series))
+
         self._session.flush()

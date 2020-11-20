@@ -4,34 +4,24 @@ from tests.storage.sql.utils import random_match_model
 
 
 def test_matches_filterable_by_player_id(session):
-    player = PlayerModel(
-        db_id=1, platform='battle', id='1234', nickname='test'
+    player1 = PlayerModel(platform='battle', id='1234', nickname='test')
+    player2 = PlayerModel(
+        platform='battle', id='another_id', nickname='another_nickname'
     )
-    match = random_match_model('test_match', Game.mw_mp, player)
-    session.add(match)
-    session.add(
-        random_match_model(
-            'should_not_be_visible',
-            Game.mw_mp,
-            PlayerModel(
-                platform='battle', id='another_id', nickname='another_nickname'
-            ),
-        )
+    match1 = random_match_model('player_1_match', Game.mw_mp, player1)
+    match2 = random_match_model(
+        'should_not_be_visible',
+        Game.mw_mp,
+        player2,
     )
-    session.flush()
-    session.expunge(match)
+    session.add(match1)
+    session.add(match2)
+    session.commit()
 
-    new_match = (
-        session.query(PlayerMatchModel)
-        .filter(PlayerMatchModel.player == PlayerID(**player.as_dict_flat()))
-        .one()
-    )
-    assert match.id == new_match.id
     assert (
         session.query(PlayerMatchModel)
-        .filter(PlayerMatchModel.id == 'test_match')
-        .filter(PlayerMatchModel.player == PlayerID(**player.as_dict_flat()))
+        .filter(PlayerMatchModel.player == PlayerID(**player1.as_dict_flat()))
         .one()
         .id
-        == 'test_match'
+        == 'player_1_match'
     )

@@ -43,7 +43,7 @@ class PlayerModel(PlayerID, Base):
 
 class WeaponStatsModel(WeaponStats, Base):
     id = Column(Integer, primary_key=True)
-    match_id = Column(String, ForeignKey('players_matches_stats.id'))
+    match_id = Column(String, ForeignKey('player_matches_stats.id'))
 
     name = Column(String, nullable=False)
     hits = Column(Integer, nullable=False)
@@ -68,7 +68,7 @@ class WeaponStatsModel(WeaponStats, Base):
 
 class BrStatsModel(BattleRoyaleStats, Base):
     id = Column(Integer, primary_key=True)
-    match_id = Column(String, ForeignKey('players_matches_stats.id'))
+    match_id = Column(String, ForeignKey('player_matches_stats.id'))
 
     teams_count = Column(Integer, nullable=False)
     players_count = Column(Integer, nullable=False)
@@ -135,7 +135,7 @@ class PlayerMatchModel(PlayerMatch, MatchStats, Base):
     distance_traveled = Column(Float, nullable=False)
     average_speed = Column(Float, nullable=False)
 
-    __tablename__ = 'players_matches_stats'
+    __tablename__ = 'player_matches_stats'
 
     def __init__(
         self,
@@ -162,3 +162,13 @@ class PlayerMatchModel(PlayerMatch, MatchStats, Base):
         self.player = player
         self.player_id = player_id
         self.game = game
+
+
+class PlayerMatchLogModel(Base):
+    match_id = Column(
+        String, ForeignKey(PlayerMatchModel.id), primary_key=True
+    )
+    source = Column(JSON, nullable=False)
+    meta = Column(JSON, nullable=False)
+
+    __tablename__ = 'player_matches_logs'

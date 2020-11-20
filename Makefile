@@ -4,6 +4,9 @@ build_artifact_name=dist/build.whl
 WHEEL_NAME_FILE ?= dist/wheel_name.txt
 DB_TYPE ?= sqlite
 
+help:     ## Show this help.
+	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
+
 install-base:
 	@pip install poetry
 
@@ -20,10 +23,17 @@ fmt:
 	@${cmd_prefix} isort .
 	@${cmd_prefix} black .
 
-test:
+test:  ## Run unit-tests
 	@${cmd_prefix} pytest .
 
-gen-migrations:
+int-test:  ## Run integration-tests, requires "DB_URI" env variable
+	@{ \
+  	set -e; \
+  	if [ -z $$DB_URI ]; then echo 'Target requires "DB_URI" env variable'; exit 1; fi; \
+  	${cmd_prefix} pytest --test-db-uri $$DB_URI . ; \
+  	}
+
+gen-migrations:  ## Generate migrations for "DB_TYPE" outputting them into "${DB_TYPE}_migrations" folder
 	@mkdir -p ${DB_TYPE}_migrations
 	@${cmd_prefix} python generate_migrations.py ${DB_TYPE} ${DB_TYPE}_migrations
 
