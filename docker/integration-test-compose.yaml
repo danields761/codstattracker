@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  base:
+    build:
+      context: ..
+      dockerfile: docker/base.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: make int-test
+    environment:
+      DB_URI: postgres://test:test@postgres/test
+  postgres:
+    image: "postgres:12"
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DATABASE=test
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test" ]
+      interval: 1s
+      timeout: 1s
+      retries: 5

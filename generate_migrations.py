@@ -112,7 +112,7 @@ def write_raw_migrations(
         down_file.write_text(down)
 
 
-def _main(alembic_executable: str, target_db_type: str, dst_dir: Path) -> None:
+def generate_migrations(alembic_executable: str, target_db_type: str, dst_dir: Path) -> None:
     assert dst_dir.is_dir(), 'Destination must be a directory'
 
     migrations = list_migrations()
@@ -134,7 +134,7 @@ def main():
     parser.add_argument('destination-dir', type=Path)
 
     args = parser.parse_args()
-    _main(
+    generate_migrations(
         args.alembic,
         args.__dict__['db-type'],
         args.__dict__['destination-dir'],

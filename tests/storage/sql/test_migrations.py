@@ -1,15 +1,13 @@
 import os
-from pathlib import Path
 
 from alembic.config import main
 from pytest import fixture
 
 
 @fixture
-def workon_proj_root():
-    proj_root = Path(__file__).parent.parent.parent.parent
+def workon_proj_root(project_root):
     old_cwd = os.getcwd()
-    os.chdir(proj_root)
+    os.chdir(project_root)
     yield
     os.chdir(old_cwd)
 
